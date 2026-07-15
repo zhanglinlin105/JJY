@@ -405,68 +405,78 @@ summary:focus-visible {
 
 .workArt {
   position: relative;
-  display: grid;
-  place-items: center;
-  aspect-ratio: 1.54 / 1;
+  display: block;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: var(--paper-soft);
+  border: 1px solid rgba(23, 21, 21, 0.12);
+  background: #1a1818;
+  box-shadow: 0 24px 70px rgba(42, 24, 28, 0.12);
   isolation: isolate;
 }
 
-.workArt::before,
 .workArt::after {
   content: "";
   position: absolute;
-  z-index: -1;
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  border-radius: 50%;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(14, 12, 12, 0.34), transparent 28%, transparent 64%, rgba(14, 12, 12, 0.42));
+  pointer-events: none;
+  transition: background 250ms ease;
 }
 
-.workArt::before {
-  width: 58%;
-  aspect-ratio: 1;
-  top: -22%;
-  right: -8%;
+.workCover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.workArt::after {
-  width: 40%;
-  aspect-ratio: 1;
-  bottom: -23%;
-  left: 8%;
-}
-
-.workArt--wine { background: #7d2336; color: #fffdfc; }
-.workArt--ink { background: #1f1c1c; color: #fffdfc; }
-.workArt--silver { background: #d9d3cc; color: #3c171f; }
-.workArt--plum { background: #4b2733; color: #f4f0ea; }
-.workArt--sage { background: #667069; color: #fffdfc; }
-.workArt--blue { background: #293747; color: #f4f0ea; }
-.workArt--night { background: #171515; color: #c8c3bd; }
-
-.workArtTitle {
-  max-width: 80%;
-  font-family: var(--font-serif);
-  font-size: clamp(3.1rem, 7vw, 7.5rem);
-  letter-spacing: -0.06em;
-  line-height: 1;
-  text-align: center;
-  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+.workArt--contain .workCover {
+  object-fit: contain;
+  background: #073466;
 }
 
 .workNumber,
-.workArtYear {
+.workPlatform,
+.workOpen {
   position: absolute;
+  z-index: 2;
+  color: var(--white);
   font-family: Georgia, serif;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.16em;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.46);
 }
 
-.workNumber { top: 22px; left: 24px; }
-.workArtYear { right: 24px; bottom: 20px; }
+.workNumber { top: 18px; left: 20px; }
 
-.workCard:hover .workArtTitle {
-  transform: scale(1.035);
+.workPlatform {
+  top: 18px;
+  right: 20px;
+}
+
+.workOpen {
+  right: 18px;
+  bottom: 16px;
+  padding: 9px 13px;
+  background: rgba(23, 21, 21, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 220ms ease, transform 220ms ease, background 220ms ease;
+}
+
+.workCard:hover .workCover,
+.workArt:focus-visible .workCover {
+  transform: scale(1.025);
+}
+
+.workArt:hover .workOpen,
+.workArt:focus-visible .workOpen {
+  background: rgba(125, 35, 54, 0.92);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .workInfo h3 {
@@ -1174,7 +1184,12 @@ summary:focus-visible {
   }
 
   .workArt {
-    aspect-ratio: 1.32 / 1;
+    aspect-ratio: 16 / 9;
+  }
+
+  .workOpen {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .workInfo h3 {

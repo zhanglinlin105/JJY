@@ -5,8 +5,9 @@ const works = [
     title: "芸汐传",
     role: "韩芸汐",
     note: "从偶像舞台走向古装大女主的重要节点，也以《叹云兮》延展了角色的音乐记忆。",
-    source: "https://www.iq.com/album/19rxrvzovg",
-    tone: "wine",
+    source: "https://www.iq.com/play/legend-of-yun-xi-2018-19rrhl3t7l?lang=zh_cn",
+    image: "/images/works/yunxi.webp",
+    platform: "iQIYI",
   },
   {
     year: "2019",
@@ -14,8 +15,9 @@ const works = [
     title: "新白娘子传奇",
     role: "白素贞",
     note: "以新一代视角重新演绎经典白蛇故事，在古典气质与当代表达之间寻找平衡。",
-    source: "https://www.iqiyi.com/common/20190403/e37fdd55a52b7782.html",
-    tone: "ink",
+    source: "https://www.iq.com/play/the-legend-of-white-snake-2019-2c3s5z48ijx?lang=zh_cn",
+    image: "/images/works/white-snake.webp",
+    platform: "iQIYI",
   },
   {
     year: "2019",
@@ -23,8 +25,10 @@ const works = [
     title: "恋爱告急",
     role: "演唱",
     note: "轻快明亮的个人单曲，成为她离开团体舞台之后极具辨识度的流行音乐作品。",
-    source: "https://music.apple.com/jp/song/1703179307",
-    tone: "silver",
+    source: "https://music.apple.com/cn/album/%E6%81%8B%E7%88%B1%E5%91%8A%E6%80%A5-single/1703179030",
+    image: "/images/works/love-emergency.jpg",
+    imageFit: "contain",
+    platform: "APPLE MUSIC",
   },
   {
     year: "2023",
@@ -33,7 +37,8 @@ const works = [
     role: "魏枝 / 司马忘月 / 魔后",
     note: "在仙侠叙事中呈现多重人物状态，让角色的成长、选择与宿命彼此映照。",
     source: "https://www.iqiyi.com/a_188g3fn6fl1.html",
-    tone: "plum",
+    image: "/images/works/beauty-of-resilience.webp",
+    platform: "iQIYI",
   },
   {
     year: "2024",
@@ -42,7 +47,8 @@ const works = [
     role: "韩菱纱",
     note: "饰演机敏灵动的韩菱纱，并演唱角色主题曲《如纱》。",
     source: "https://www.iqiyi.com/a_dwo684rau1.html",
-    tone: "sage",
+    image: "/images/works/sword-and-fairy-4.webp",
+    platform: "iQIYI",
   },
   {
     year: "2024",
@@ -50,8 +56,9 @@ const works = [
     title: "花间令",
     role: "杨采薇 / 上官芷",
     note: "古装、爱情与探案交织的作品，以双重身份带出人物关系的悬念。",
-    source: "https://m.bjnews.com.cn/detail/1710471421129441.html",
-    tone: "blue",
+    source: "https://v.youku.com/v_nextstage/id_ffaac0420f0042b9b1e1.html",
+    image: "/images/works/in-blossom.jpg",
+    platform: "YOUKU",
   },
   {
     year: "2026",
@@ -59,8 +66,9 @@ const works = [
     title: "月鳞绮纪",
     role: "露芜衣",
     note: "饰演九尾狐露芜衣，于 2026 年 4 月上线，是她最新的荧幕章节。",
-    source: "https://www.youku.tv/v/v_show/id_XNjUyMzQwNTQ4NA%3D%3D.html?s=ddad446e1d6645cdb814",
-    tone: "night",
+    source: "https://www.youku.tv/v/v_show/id_XNjUyODI3NDY1Mg%3D%3D.html?s=ddad446e1d6645cdb814",
+    image: "/images/works/moonlit-reunion.jpg",
+    platform: "YOUKU",
   },
 ];
 
@@ -251,18 +259,32 @@ export default function Home() {
             <p>
               七部作品，串联演员与歌手两种身份。
               <br />
-              年份与角色信息均来自公开资料。
+              点击封面，可直接进入官方作品页面。
             </p>
           </div>
 
           <div className="worksList">
             {works.map((work, index) => (
               <article className="workCard" key={work.title}>
-                <div className={`workArt workArt--${work.tone}`} aria-hidden="true">
-                  <span className="workNumber">{String(index + 1).padStart(2, "0")}</span>
-                  <span className="workArtTitle">{work.title}</span>
-                  <span className="workArtYear">{work.year}</span>
-                </div>
+                <a
+                  className={`workArt${work.imageFit === "contain" ? " workArt--contain" : ""}`}
+                  href={work.source}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`在 ${work.platform} 打开《${work.title}》作品页面`}
+                >
+                  <img
+                    className="workCover"
+                    src={work.image}
+                    alt={`《${work.title}》作品封面`}
+                    loading="lazy"
+                  />
+                  <span className="workNumber" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="workPlatform" aria-hidden="true">{work.platform}</span>
+                  <span className="workOpen" aria-hidden="true">打开作品 ↗</span>
+                </a>
                 <div className="workInfo">
                   <p className="workMeta">
                     {work.year} <span /> {work.kind}
@@ -273,7 +295,7 @@ export default function Home() {
                   </p>
                   <p className="workNote">{work.note}</p>
                   <a href={work.source} target="_blank" rel="noreferrer">
-                    查看资料来源 <span aria-hidden="true">↗</span>
+                    在 {work.platform} 打开 <span aria-hidden="true">↗</span>
                   </a>
                 </div>
               </article>
@@ -381,7 +403,7 @@ export default function Home() {
             <a href="#about">关于</a>
           </nav>
           <div className="creditColumn">
-            <p>图片授权</p>
+            <p>图片与封面来源</p>
             <p>
               “Ju Jing Yi 27th” — Camellia234，
               <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a>，已裁剪。
@@ -393,6 +415,12 @@ export default function Home() {
             <p>
               SNH48 舞台 — 纸鱼_咲，
               <a href="https://creativecommons.org/licenses/by/2.5/" target="_blank" rel="noreferrer">CC BY 2.5</a>，已裁剪。
+            </p>
+            <p>
+              作品封面来自对应的
+              <a href="https://www.iq.com/" target="_blank" rel="noreferrer"> iQIYI</a>、
+              <a href="https://music.apple.com/" target="_blank" rel="noreferrer">Apple Music</a> 与
+              <a href="https://www.youku.tv/" target="_blank" rel="noreferrer">优酷</a>官方作品页，仅用于作品识别，版权归相关权利方所有。
             </p>
           </div>
           <div className="footerNote">
