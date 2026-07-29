@@ -1,3 +1,6 @@
+import SiteHeader from "./SiteHeader";
+import WorksShowcase from "./WorksShowcase";
+
 const works = [
   {
     year: "2018",
@@ -8,6 +11,8 @@ const works = [
     source: "https://www.iq.com/play/legend-of-yun-xi-2018-19rrhl3t7l?lang=zh_cn",
     image: "/images/works/yunxi.webp",
     platform: "iQIYI",
+    width: 1920,
+    height: 1080,
   },
   {
     year: "2019",
@@ -18,6 +23,8 @@ const works = [
     source: "https://www.iq.com/play/the-legend-of-white-snake-2019-2c3s5z48ijx?lang=zh_cn",
     image: "/images/works/white-snake.webp",
     platform: "iQIYI",
+    width: 1920,
+    height: 1080,
   },
   {
     year: "2019",
@@ -29,6 +36,8 @@ const works = [
     image: "/images/works/love-emergency.jpg",
     imageFit: "contain",
     platform: "APPLE MUSIC",
+    width: 1200,
+    height: 1200,
   },
   {
     year: "2023",
@@ -39,6 +48,8 @@ const works = [
     source: "https://www.iqiyi.com/a_188g3fn6fl1.html",
     image: "/images/works/beauty-of-resilience.webp",
     platform: "iQIYI",
+    width: 1920,
+    height: 1080,
   },
   {
     year: "2024",
@@ -49,6 +60,8 @@ const works = [
     source: "https://www.iqiyi.com/a_dwo684rau1.html",
     image: "/images/works/sword-and-fairy-4.webp",
     platform: "iQIYI",
+    width: 1920,
+    height: 1080,
   },
   {
     year: "2024",
@@ -59,6 +72,8 @@ const works = [
     source: "https://v.youku.com/v_nextstage/id_ffaac0420f0042b9b1e1.html",
     image: "/images/works/in-blossom.jpg",
     platform: "YOUKU",
+    width: 1366,
+    height: 768,
   },
   {
     year: "2026",
@@ -69,6 +84,8 @@ const works = [
     source: "https://www.youku.tv/v/v_show/id_XNjUyODI3NDY1Mg%3D%3D.html?s=ddad446e1d6645cdb814",
     image: "/images/works/moonlit-reunion.jpg",
     platform: "YOUKU",
+    width: 1366,
+    height: 768,
   },
 ];
 
@@ -117,6 +134,8 @@ const gallery = [
     caption: "书房肖像 · 2021",
     file: "https://commons.wikimedia.org/wiki/File:Ju_Jing_Yi_27th.jpg",
     className: "galleryLead",
+    width: 1800,
+    height: 1350,
   },
   {
     src: "/images/ju-portrait-02.jpg",
@@ -124,6 +143,8 @@ const gallery = [
     caption: "舞台时刻 · 2017",
     file: "https://commons.wikimedia.org/wiki/File:%E9%9E%A0%E5%A9%A7%E7%A5%8E_(2).jpg",
     className: "galleryTall",
+    width: 1174,
+    height: 1800,
   },
   {
     src: "/images/ju-portrait-04.jpg",
@@ -131,6 +152,8 @@ const gallery = [
     caption: "聚光灯下 · 2017",
     file: "https://commons.wikimedia.org/wiki/File:%E9%9E%A0%E5%A9%A7%E7%A5%8E_(4).jpg",
     className: "galleryPortrait",
+    width: 1320,
+    height: 1800,
   },
   {
     src: "/images/ju-election-2015.jpg",
@@ -138,6 +161,8 @@ const gallery = [
     caption: "SNH48 舞台 · 2015",
     file: "https://commons.wikimedia.org/wiki/File:SNH48_%E7%AC%AC%E4%BA%8C%E5%B1%8A%E6%80%BB%E9%80%89%E4%B8%BE_10.jpg",
     className: "galleryWide",
+    width: 1800,
+    height: 1350,
   },
   {
     src: "/images/ju-portrait-03.jpg",
@@ -145,6 +170,8 @@ const gallery = [
     caption: "舞台造型 · 2017",
     file: "https://commons.wikimedia.org/wiki/File:%E9%9E%A0%E5%A9%A7%E7%A5%8E_(3).jpg",
     className: "galleryPortrait galleryCropLow",
+    width: 1264,
+    height: 1800,
   },
   {
     src: "/images/ju-portrait-05.jpg",
@@ -152,6 +179,8 @@ const gallery = [
     caption: "光影近景 · 2017",
     file: "https://commons.wikimedia.org/wiki/File:%E9%9E%A0%E5%A9%A7%E7%A5%8E_(5).jpg",
     className: "gallerySquare",
+    width: 1257,
+    height: 1800,
   },
 ];
 
@@ -169,29 +198,7 @@ export default function Home() {
         跳到主要内容
       </a>
 
-      <header className="siteHeader">
-        <a className="wordmark" href="#top" aria-label="返回首页">
-          <span>JU</span> JINGYI
-        </a>
-        <nav className="desktopNav" aria-label="主要导航">
-          <a href="#works">代表作</a>
-          <a href="#journey">经历</a>
-          <a href="#gallery">影像</a>
-          <a href="#about">关于</a>
-        </nav>
-        <details className="mobileNav">
-          <summary aria-label="打开导航菜单">
-            <span />
-            <span />
-          </summary>
-          <nav aria-label="移动端导航">
-            <a href="#works">代表作</a>
-            <a href="#journey">经历</a>
-            <a href="#gallery">影像</a>
-            <a href="#about">关于</a>
-          </nav>
-        </details>
-      </header>
+      <SiteHeader />
 
       <main id="main-content">
         <section className="hero" id="top" aria-labelledby="hero-title">
@@ -200,7 +207,10 @@ export default function Home() {
               className="heroImage"
               src="/images/ju-birthday-2021.jpg"
               alt=""
+              width={1800}
+              height={1350}
               fetchPriority="high"
+              decoding="async"
             />
           </div>
           <div className="heroWash" />
@@ -263,44 +273,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="worksList">
-            {works.map((work, index) => (
-              <article className="workCard" key={work.title}>
-                <a
-                  className={`workArt${work.imageFit === "contain" ? " workArt--contain" : ""}`}
-                  href={work.source}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={`在 ${work.platform} 打开《${work.title}》作品页面`}
-                >
-                  <img
-                    className="workCover"
-                    src={work.image}
-                    alt={`《${work.title}》作品封面`}
-                    loading="lazy"
-                  />
-                  <span className="workNumber" aria-hidden="true">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className="workPlatform" aria-hidden="true">{work.platform}</span>
-                  <span className="workOpen" aria-hidden="true">打开作品 ↗</span>
-                </a>
-                <div className="workInfo">
-                  <p className="workMeta">
-                    {work.year} <span /> {work.kind}
-                  </p>
-                  <h3>{work.title}</h3>
-                  <p className="workRole">
-                    {work.kind === "音乐单曲" ? work.role : `饰 / ${work.role}`}
-                  </p>
-                  <p className="workNote">{work.note}</p>
-                  <a href={work.source} target="_blank" rel="noreferrer">
-                    在 {work.platform} 打开 <span aria-hidden="true">↗</span>
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
+          <WorksShowcase works={works} />
         </section>
 
         <section className="timelineSection" id="journey" aria-labelledby="journey-title">
@@ -339,7 +312,14 @@ export default function Home() {
             {gallery.map((image) => (
               <figure className={image.className} key={image.src}>
                 <div className="galleryImageWrap">
-                  <img src={image.src} alt={image.alt} loading="lazy" />
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    width={image.width}
+                    height={image.height}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
                 <figcaption>
                   <span>{image.caption}</span>
@@ -357,7 +337,10 @@ export default function Home() {
             <img
               src="/images/ju-portrait-02.jpg"
               alt="鞠婧祎在舞台上手持麦克风微笑"
+              width={1174}
+              height={1800}
               loading="lazy"
+              decoding="async"
             />
             <p>舞台肖像 · 2017</p>
           </div>
