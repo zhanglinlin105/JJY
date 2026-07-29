@@ -4,7 +4,9 @@
   "assets": [
     {
       "id": "P01",
-      "path": "/images/3d/hero-character.png",
+      "path": "/images/3d/hero-character.webp",
+      "mobilePath": "/images/3d/hero-character-mobile.webp",
+      "fallbackPath": "/images/3d/hero-character.png",
       "derivedFrom": "/images/ju-birthday-2021.jpg",
       "source": "https://commons.wikimedia.org/wiki/File:Ju_Jing_Yi_27th.jpg",
       "creator": "Camellia234",
@@ -16,7 +18,9 @@
     },
     {
       "id": "E01",
-      "path": "/images/ju-birthday-2021.jpg",
+      "path": "/images/3d/hero-backdrop.webp",
+      "mobilePath": "/images/3d/hero-backdrop-mobile.webp",
+      "fallbackPath": "/images/ju-birthday-2021.jpg",
       "source": "https://commons.wikimedia.org/wiki/File:Ju_Jing_Yi_27th.jpg",
       "creator": "Camellia234",
       "license": "CC BY-SA 4.0",

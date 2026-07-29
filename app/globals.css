@@ -1500,6 +1500,13 @@ button:focus-visible {
     linear-gradient(90deg, rgba(16, 11, 14, 0.94), rgba(16, 11, 14, 0.38) 55%, rgba(16, 11, 14, 0.1));
 }
 
+.hero3dBackdrop picture,
+.hero3dCharacterStage picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .hero3dBackdrop img {
   width: 100%;
   height: 100%;
@@ -2298,8 +2305,16 @@ button:focus-visible {
   transform: scaleX(var(--scene-progress));
 }
 
-.sceneRoot[data-scene-state="AUTO_ORBIT"] .hero3dWorld {
+.sceneRoot[data-scene-tier="full"][data-scene-state="AUTO_ORBIT"] .hero3dWorld {
   animation: ambientOrbit 20s ease-in-out infinite;
+}
+
+.sceneRoot:not([data-scene-tier="full"]) .orbitToggle {
+  display: none;
+}
+
+.sceneRoot:not([data-scene-tier="full"]) .hero3d--orbiting .hero3dWorld {
+  animation: none;
 }
 
 .sceneRoot[data-scene-state="ENGAGED"] .hero3dCharacter,

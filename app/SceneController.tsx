@@ -35,13 +35,11 @@ function detectTier(preference: MotionPreference): SceneTier {
   });
   const textureLimit = gl?.getParameter(gl.MAX_TEXTURE_SIZE) ?? 0;
   const memory = navigatorWithCapabilities.deviceMemory ?? 4;
+  const supportsFullScene =
+    window.innerWidth >= 1024 && Boolean(gl) && textureLimit >= 4096 && memory >= 4;
 
-  if (window.innerWidth >= 1024 && gl && textureLimit >= 4096 && memory >= 4) {
-    gl.getExtension("WEBGL_lose_context")?.loseContext();
-    return "full";
-  }
-
-  return "lite";
+  gl?.getExtension("WEBGL_lose_context")?.loseContext();
+  return supportsFullScene ? "full" : "lite";
 }
 
 function createShader(
@@ -178,8 +176,13 @@ export default function SceneController({ children }: { children: ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<ReturnType<typeof createSceneRenderer>>(null);
   const frameRef = useRef<number | null>(null);
+  const resizeFrameRef = useRef<number | null>(null);
   const progressRef = useRef(0);
   const pointerRef = useRef({ x: 0, y: 0 });
+  const detailOpenRef = useRef(false);
+  const preferenceRef = useRef<MotionPreference>("motion");
+  const tierRef = useRef<SceneTier>("static");
+  const sceneStateRef = useRef<SceneState>("REDUCED");
   const stateBeforeDetail = useRef<SceneState>("PASSIVE");
   const [preference, setPreference] = useState<MotionPreference>("motion");
   const [tier, setTier] = useState<SceneTier>("static");
@@ -187,13 +190,41 @@ export default function SceneController({ children }: { children: ReactNode }) {
   const [activeChapter, setActiveChapter] = useState<(typeof chapters)[number]>("top");
   const [fallbackMessage, setFallbackMessage] = useState("");
 
-  const applyPreference = useCallback((nextPreference: MotionPreference) => {
-    const nextTier = detectTier(nextPreference);
-    setPreference(nextPreference);
-    setTier(nextTier);
-    setSceneState(nextTier === "static" ? "REDUCED" : "PASSIVE");
-    window.localStorage.setItem(storageKey, nextPreference);
+  const commitSceneState = useCallback((nextState: SceneState) => {
+    sceneStateRef.current = nextState;
+    setSceneState(nextState);
   }, []);
+
+  const applyTier = useCallback(
+    (nextTier: SceneTier) => {
+      const changed = tierRef.current !== nextTier;
+      tierRef.current = nextTier;
+      if (changed) {
+        setTier(nextTier);
+        window.dispatchEvent(
+          new CustomEvent("scene:tierchange", { detail: { tier: nextTier } }),
+        );
+      }
+
+      const restingState: SceneState = nextTier === "static" ? "REDUCED" : "PASSIVE";
+      if (detailOpenRef.current) {
+        stateBeforeDetail.current = restingState;
+      } else {
+        commitSceneState(restingState);
+      }
+    },
+    [commitSceneState],
+  );
+
+  const applyPreference = useCallback(
+    (nextPreference: MotionPreference) => {
+      preferenceRef.current = nextPreference;
+      setPreference(nextPreference);
+      applyTier(detectTier(nextPreference));
+      window.localStorage.setItem(storageKey, nextPreference);
+    },
+    [applyTier],
+  );
 
   const renderScene = useCallback(() => {
     rendererRef.current?.render(
@@ -258,7 +289,7 @@ export default function SceneController({ children }: { children: ReactNode }) {
     const canvas = canvasRef.current;
     const renderer = createSceneRenderer(canvas);
     if (!renderer) {
-      setTier("lite");
+      applyTier("lite");
       return;
     }
     rendererRef.current = renderer;
@@ -267,8 +298,16 @@ export default function SceneController({ children }: { children: ReactNode }) {
     const handleContextLost = (event: Event) => {
       event.preventDefault();
       rendererRef.current = null;
+      tierRef.current = "static";
       setTier("static");
-      setSceneState("REDUCED");
+      window.dispatchEvent(
+        new CustomEvent("scene:tierchange", { detail: { tier: "static" } }),
+      );
+      if (detailOpenRef.current) {
+        stateBeforeDetail.current = "REDUCED";
+      } else {
+        commitSceneState("REDUCED");
+      }
       setFallbackMessage("空间场景已暂停，正文已切换为静态阅读。");
     };
     canvas.addEventListener("webglcontextlost", handleContextLost);
@@ -278,11 +317,11 @@ export default function SceneController({ children }: { children: ReactNode }) {
       renderer.destroy();
       if (rendererRef.current === renderer) rendererRef.current = null;
     };
-  }, [renderScene, tier]);
+  }, [applyTier, commitSceneState, renderScene, tier]);
 
   useEffect(() => {
     const handlePointerMove = (event: PointerEvent) => {
-      if (tier !== "full" || sceneState === "DETAIL_OPEN") return;
+      if (tierRef.current !== "full" || detailOpenRef.current) return;
       const x = (event.clientX / Math.max(window.innerWidth, 1) - 0.5) * 2;
       const y = (event.clientY / Math.max(window.innerHeight, 1) - 0.5) * 2;
       pointerRef.current = { x, y };
@@ -293,57 +332,76 @@ export default function SceneController({ children }: { children: ReactNode }) {
       root?.style.setProperty("--scene-y", `${(y * 10).toFixed(2)}px`);
       root?.style.setProperty("--light-x", `${(50 + x * 16).toFixed(2)}%`);
       root?.style.setProperty("--light-y", `${(42 + y * 12).toFixed(2)}%`);
-      setSceneState((current) =>
-        current === "AUTO_ORBIT" || current === "FOCUSED" ? current : "ENGAGED",
-      );
+      if (
+        sceneStateRef.current !== "AUTO_ORBIT" &&
+        sceneStateRef.current !== "FOCUSED"
+      ) {
+        commitSceneState("ENGAGED");
+      }
       renderScene();
     };
     const handlePointerLeave = () => {
+      if (detailOpenRef.current) return;
       pointerRef.current = { x: 0, y: 0 };
-      setSceneState((current) =>
-        current === "DETAIL_OPEN" || current === "AUTO_ORBIT" ? current : "PASSIVE",
-      );
+      if (sceneStateRef.current !== "AUTO_ORBIT") commitSceneState("PASSIVE");
       renderScene();
     };
     const handleFocus = (event: FocusEvent) => {
+      if (detailOpenRef.current) return;
       const target = event.target as HTMLElement;
-      if (target.closest("[data-scene-hotspot]")) setSceneState("FOCUSED");
+      if (target.closest("[data-scene-hotspot]")) commitSceneState("FOCUSED");
     };
     const handleBlur = () => {
       window.requestAnimationFrame(() => {
+        if (detailOpenRef.current) return;
         if (!(document.activeElement as HTMLElement | null)?.closest("[data-scene-hotspot]")) {
-          setSceneState(tier === "static" ? "REDUCED" : "PASSIVE");
+          commitSceneState(tierRef.current === "static" ? "REDUCED" : "PASSIVE");
         }
       });
     };
     const handleDetail = (event: Event) => {
       const open = (event as CustomEvent<{ open: boolean }>).detail.open;
       if (open) {
-        stateBeforeDetail.current = sceneState;
-        setSceneState("DETAIL_OPEN");
+        if (detailOpenRef.current) return;
+        stateBeforeDetail.current = sceneStateRef.current;
+        detailOpenRef.current = true;
+        commitSceneState("DETAIL_OPEN");
       } else {
-        setSceneState(tier === "static" ? "REDUCED" : stateBeforeDetail.current);
+        if (!detailOpenRef.current) return;
+        detailOpenRef.current = false;
+        commitSceneState(
+          tierRef.current === "static" ? "REDUCED" : stateBeforeDetail.current,
+        );
         scheduleSceneUpdate();
       }
     };
     const handleOrbit = (event: Event) => {
+      if (detailOpenRef.current || tierRef.current !== "full") return;
       const enabled = (event as CustomEvent<{ enabled: boolean }>).detail.enabled;
-      setSceneState(enabled ? "AUTO_ORBIT" : "PASSIVE");
+      commitSceneState(enabled ? "AUTO_ORBIT" : "PASSIVE");
     };
     const handleNudge = (event: Event) => {
-      if (tier === "static") return;
+      if (detailOpenRef.current || tierRef.current === "static") return;
       const { x, y } = (event as CustomEvent<{ x: number; y: number }>).detail;
       pointerRef.current = { x, y };
       rootRef.current?.style.setProperty("--scene-rx", `${(-y * 3).toFixed(2)}deg`);
       rootRef.current?.style.setProperty("--scene-ry", `${(x * 6).toFixed(2)}deg`);
       rootRef.current?.style.setProperty("--scene-x", `${(x * 18).toFixed(2)}px`);
       rootRef.current?.style.setProperty("--scene-y", `${(y * 10).toFixed(2)}px`);
-      setSceneState(x === 0 && y === 0 ? "PASSIVE" : "FOCUSED");
+      commitSceneState(x === 0 && y === 0 ? "PASSIVE" : "FOCUSED");
       renderScene();
+    };
+    const handleResize = () => {
+      scheduleSceneUpdate();
+      if (resizeFrameRef.current !== null) return;
+      resizeFrameRef.current = window.requestAnimationFrame(() => {
+        resizeFrameRef.current = null;
+        applyTier(detectTier(preferenceRef.current));
+      });
     };
 
     window.addEventListener("scroll", scheduleSceneUpdate, { passive: true });
-    window.addEventListener("resize", scheduleSceneUpdate);
+    window.addEventListener("resize", handleResize);
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     document.documentElement.addEventListener("pointerleave", handlePointerLeave);
     document.addEventListener("focusin", handleFocus);
@@ -355,8 +413,11 @@ export default function SceneController({ children }: { children: ReactNode }) {
 
     return () => {
       if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
+      if (resizeFrameRef.current !== null) {
+        window.cancelAnimationFrame(resizeFrameRef.current);
+      }
       window.removeEventListener("scroll", scheduleSceneUpdate);
-      window.removeEventListener("resize", scheduleSceneUpdate);
+      window.removeEventListener("resize", handleResize);
       window.removeEventListener("pointermove", handlePointerMove);
       document.documentElement.removeEventListener("pointerleave", handlePointerLeave);
       document.removeEventListener("focusin", handleFocus);
@@ -365,7 +426,7 @@ export default function SceneController({ children }: { children: ReactNode }) {
       window.removeEventListener("scene:orbit", handleOrbit);
       window.removeEventListener("scene:nudge", handleNudge);
     };
-  }, [renderScene, sceneState, scheduleSceneUpdate, tier]);
+  }, [applyTier, commitSceneState, renderScene, scheduleSceneUpdate]);
 
   return (
     <div

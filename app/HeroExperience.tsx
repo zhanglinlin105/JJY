@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type KeyboardEvent } from "react";
+import { useEffect, useState, type KeyboardEvent } from "react";
 
 const particles = [
   ["10%", "20%", "-10px", "3px"],
@@ -15,6 +15,16 @@ const particles = [
 
 export default function HeroExperience() {
   const [isOrbiting, setIsOrbiting] = useState(false);
+
+  useEffect(() => {
+    const handleTierChange = (event: Event) => {
+      const nextTier = (event as CustomEvent<{ tier: string }>).detail.tier;
+      if (nextTier !== "full") setIsOrbiting(false);
+    };
+
+    window.addEventListener("scene:tierchange", handleTierChange);
+    return () => window.removeEventListener("scene:tierchange", handleTierChange);
+  }, []);
 
   function handleKeyDown(event: KeyboardEvent<HTMLElement>) {
     const controls: Record<string, { x: number; y: number }> = {
@@ -48,14 +58,22 @@ export default function HeroExperience() {
       <div className="hero3dViewport" aria-hidden="true">
         <div className="hero3dWorld">
           <div className="hero3dBackdrop">
-            <img
-              src="/images/ju-birthday-2021.jpg"
-              alt=""
-              width={1800}
-              height={1350}
-              fetchPriority="high"
-              decoding="async"
-            />
+            <picture>
+              <source
+                media="(max-width: 767px)"
+                srcSet="/images/3d/hero-backdrop-mobile.webp"
+                type="image/webp"
+              />
+              <source srcSet="/images/3d/hero-backdrop.webp" type="image/webp" />
+              <img
+                src="/images/ju-birthday-2021.jpg"
+                alt=""
+                width={1800}
+                height={1350}
+                fetchPriority="high"
+                decoding="async"
+              />
+            </picture>
           </div>
           <div className="hero3dGrid" />
           <div className="hero3dGlow" />
@@ -69,14 +87,23 @@ export default function HeroExperience() {
           </div>
           <div className="hero3dPedestal" />
           <div className="hero3dCharacterStage">
-            <img
-              className="hero3dCharacter"
-              src="/images/3d/hero-character.png"
-              alt=""
-              width={1023}
-              height={1537}
-              decoding="async"
-            />
+            <picture>
+              <source
+                media="(max-width: 767px)"
+                srcSet="/images/3d/hero-character-mobile.webp"
+                type="image/webp"
+              />
+              <source srcSet="/images/3d/hero-character.webp" type="image/webp" />
+              <img
+                className="hero3dCharacter"
+                src="/images/3d/hero-character.png"
+                alt=""
+                width={1023}
+                height={1537}
+                fetchPriority="high"
+                decoding="async"
+              />
+            </picture>
           </div>
           {particles.map(([left, top, depth, size], index) => (
             <i

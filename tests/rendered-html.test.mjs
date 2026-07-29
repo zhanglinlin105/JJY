@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
 const templateRoot = new URL("../", import.meta.url);
@@ -72,6 +72,7 @@ test("keeps the five-chapter scene progressive and accessible", async () => {
   assert.match(scene, /DETAIL_OPEN/);
   assert.match(hero, /onKeyDown/);
   assert.match(hero, /aria-pressed/);
+  assert.match(hero, /hero-character\.webp/);
   assert.match(hero, /hero-character\.png/);
   assert.doesNotMatch(header, /addEventListener\("scroll"/);
   assert.match(header, /scene:chapterchange/);
@@ -93,4 +94,46 @@ test("keeps the five-chapter scene progressive and accessible", async () => {
 
   await assert.rejects(access(new URL("../app/_sites-preview", import.meta.url)));
   await assert.rejects(access(new URL("public/_sites-preview", templateRoot)));
+});
+
+test("locks detail state, reclassifies on resize, and enforces hero budgets", async () => {
+  const [scene, hero, css, desktopBackdrop, desktopCharacter, mobileBackdrop, mobileCharacter] =
+    await Promise.all([
+      readFile(new URL("../app/SceneController.tsx", import.meta.url), "utf8"),
+      readFile(new URL("../app/HeroExperience.tsx", import.meta.url), "utf8"),
+      readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+      stat(new URL("../public/images/3d/hero-backdrop.webp", import.meta.url)),
+      stat(new URL("../public/images/3d/hero-character.webp", import.meta.url)),
+      stat(new URL("../public/images/3d/hero-backdrop-mobile.webp", import.meta.url)),
+      stat(new URL("../public/images/3d/hero-character-mobile.webp", import.meta.url)),
+    ]);
+
+  assert.match(scene, /const detailOpenRef = useRef\(false\)/);
+  assert.match(scene, /if \(tierRef\.current !== "full" \|\| detailOpenRef\.current\) return/);
+  assert.match(scene, /const handleBlur[\s\S]*if \(detailOpenRef\.current\) return/);
+  assert.match(scene, /detailOpenRef\.current = true[\s\S]*commitSceneState\("DETAIL_OPEN"\)/);
+  assert.match(scene, /const handleResize[\s\S]*detectTier\(preferenceRef\.current\)/);
+  assert.match(scene, /window\.addEventListener\("resize", handleResize\)/);
+  assert.match(scene, /scene:tierchange/);
+
+  assert.match(hero, /scene:tierchange/);
+  assert.match(hero, /nextTier !== "full"/);
+  assert.match(hero, /hero-backdrop-mobile\.webp/);
+  assert.match(hero, /hero-character-mobile\.webp/);
+  assert.match(css, /sceneRoot:not\(\[data-scene-tier="full"\]\) \.orbitToggle/);
+  assert.match(
+    css,
+    /data-scene-tier="full"\]\[data-scene-state="AUTO_ORBIT"\] \.hero3dWorld/,
+  );
+
+  const desktopHeroBytes = desktopBackdrop.size + desktopCharacter.size;
+  const mobileHeroBytes = mobileBackdrop.size + mobileCharacter.size;
+  assert.ok(
+    desktopHeroBytes <= 1_800_000,
+    `desktop hero resources exceed 1.8 MB: ${desktopHeroBytes} bytes`,
+  );
+  assert.ok(
+    mobileHeroBytes <= 900_000,
+    `mobile hero resources exceed 900 KB: ${mobileHeroBytes} bytes`,
+  );
 });
