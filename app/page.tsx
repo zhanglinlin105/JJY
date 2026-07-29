@@ -1,3 +1,4 @@
+import HeroExperience from "./HeroExperience";
 import SiteHeader from "./SiteHeader";
 import WorksShowcase from "./WorksShowcase";
 
@@ -201,48 +202,7 @@ export default function Home() {
       <SiteHeader />
 
       <main id="main-content">
-        <section className="hero" id="top" aria-labelledby="hero-title">
-          <div className="heroImageWrap" aria-hidden="true">
-            <img
-              className="heroImage"
-              src="/images/ju-birthday-2021.jpg"
-              alt=""
-              width={1800}
-              height={1350}
-              fetchPriority="high"
-              decoding="async"
-            />
-          </div>
-          <div className="heroWash" />
-          <div className="heroGrid">
-            <p className="eyebrow heroEyebrow">ACTRESS · SINGER / 1994—PRESENT</p>
-            <h1 id="hero-title">
-              <span>鞠</span>
-              <span>婧祎</span>
-            </h1>
-            <p className="heroIntro">
-              从剧场舞台到荧幕叙事，
-              <br />
-              在表演与音乐之间，持续书写自己的章节。
-            </p>
-            <div className="heroActions">
-              <a className="primaryButton" href="#works">
-                探索代表作 <span aria-hidden="true">↘</span>
-              </a>
-              <a className="textLink" href="#journey">
-                了解她的旅程
-              </a>
-            </div>
-            <div className="heroIndex" aria-hidden="true">
-              <span>01</span>
-              <i />
-              <span>SCROLL</span>
-            </div>
-            <p className="heroCredit">
-              Photo: Camellia234 / CC BY-SA 4.0 · 已裁剪
-            </p>
-          </div>
-        </section>
+        <HeroExperience />
 
         <section className="introStatement" aria-label="人物简介">
           <p className="eyebrow">A PORTRAIT IN MOTION</p>

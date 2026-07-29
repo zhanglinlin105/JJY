@@ -31,7 +31,7 @@ test("server-renders the complete portrait archive", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<title>鞠婧祎｜个人主页<\/title>/);
+  assert.match(html, /<title>鞠婧祎｜3D 互动人物志<\/title>/);
   assert.match(html, /id="works"/);
   assert.match(html, /id="journey"/);
   assert.match(html, /id="gallery"/);
@@ -42,8 +42,9 @@ test("server-renders the complete portrait archive", async () => {
 });
 
 test("keeps long-page navigation and filtering accessible", async () => {
-  const [page, header, showcase, css, layout, packageJson] = await Promise.all([
+  const [page, hero, header, showcase, css, layout, packageJson] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/HeroExperience.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/SiteHeader.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/WorksShowcase.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
@@ -52,14 +53,19 @@ test("keeps long-page navigation and filtering accessible", async () => {
   ]);
 
   assert.match(page, /<SiteHeader \/>/);
+  assert.match(page, /<HeroExperience \/>/);
   assert.match(page, /<WorksShowcase works=\{works\} \/>/);
+  assert.match(hero, /onPointerMove/);
+  assert.match(hero, /onKeyDown/);
+  assert.match(hero, /aria-pressed/);
+  assert.match(hero, /hero-character\.png/);
   assert.match(header, /IntersectionObserver/);
   assert.match(header, /aria-current/);
   assert.match(header, /closeMenu/);
   assert.match(showcase, /aria-pressed/);
   assert.match(showcase, /aria-live="polite"/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
-  assert.match(layout, /鞠婧祎｜个人主页/);
+  assert.match(layout, /鞠婧祎｜3D 互动人物志/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 
   await assert.rejects(access(new URL("../app/_sites-preview", import.meta.url)));

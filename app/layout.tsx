@@ -2,9 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
 
-const title = "鞠婧祎｜个人主页";
+const title = "鞠婧祎｜3D 互动人物志";
 const description =
-  "鞠婧祎人物资料页：以当代人物志的方式呈现高清影像、代表作品、生平经历与演员、歌手双线职业轨迹。";
+  "鞠婧祎 3D 互动人物志：以空间化影像、代表作品与生平时间线，呈现演员、歌手双线职业轨迹。";
 
 export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = await headers();
@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(origin),
     title,
     description,
-    applicationName: "JU JINGYI — Portrait Archive",
+    applicationName: "JU JINGYI — Portrait in Motion",
     alternates: {
       canonical: `${origin}/`,
     },
@@ -30,15 +30,15 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       locale: "zh_CN",
       url: `${origin}/`,
-      siteName: "JU JINGYI — Portrait Archive",
+      siteName: "JU JINGYI — Portrait in Motion",
       title,
       description,
       images: [
         {
           url: socialImage,
-          width: 1200,
-          height: 630,
-          alt: "鞠婧祎个人主页分享封面",
+          width: 1731,
+          height: 909,
+          alt: "鞠婧祎 3D 互动人物主页分享封面",
         },
       ],
     },
