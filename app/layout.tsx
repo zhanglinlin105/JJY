@@ -36,8 +36,8 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [
         {
           url: socialImage,
-          width: 1792,
-          height: 928,
+          width: 1200,
+          height: 630,
           alt: "鞠婧祎个人主页分享封面",
         },
       ],
