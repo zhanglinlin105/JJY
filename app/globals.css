@@ -2151,3 +2151,562 @@ button:focus-visible {
     transform: none;
   }
 }
+
+/* Unified five-chapter scene controller */
+.sceneRoot {
+  --scene-progress: 0;
+  --scene-local: 0;
+  --scene-rx: 0deg;
+  --scene-ry: 0deg;
+  --scene-x: 0px;
+  --scene-y: 0px;
+  --light-x: 50%;
+  --light-y: 42%;
+  position: relative;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.sceneDocument {
+  position: relative;
+  z-index: 1;
+}
+
+.sceneAtmosphere {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  background: #160c11;
+  pointer-events: none;
+}
+
+.sceneCanvas,
+.sceneFallback,
+.sceneVignette {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.sceneCanvas {
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.sceneRoot[data-scene-tier="full"] .sceneCanvas {
+  opacity: 1;
+}
+
+.sceneFallback {
+  background:
+    radial-gradient(circle at var(--light-x) var(--light-y), rgba(188, 101, 118, 0.2), transparent 32%),
+    linear-gradient(135deg, #241018, #120b0f 55%, #372a29);
+  transform: scale(1.08) translate3d(var(--scene-x), var(--scene-y), 0);
+  transition: transform 220ms ease, opacity 420ms ease;
+}
+
+.sceneRoot[data-scene-tier="full"] .sceneFallback {
+  opacity: 0.3;
+}
+
+.sceneVignette {
+  background:
+    linear-gradient(90deg, rgba(9, 5, 7, 0.4), transparent 28%, transparent 70%, rgba(9, 5, 7, 0.3)),
+    linear-gradient(180deg, rgba(9, 5, 7, 0.22), transparent 30%, rgba(9, 5, 7, 0.5));
+}
+
+.sceneRoot[data-scene-tier="static"] .sceneAtmosphere {
+  display: none;
+}
+
+.sceneModeControl {
+  position: fixed;
+  z-index: 90;
+  top: 86px;
+  right: var(--gutter);
+  display: inline-flex;
+  overflow: hidden;
+  padding: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(20, 13, 16, 0.74);
+  box-shadow: 0 10px 32px rgba(12, 8, 10, 0.18);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.sceneModeControl button {
+  min-height: 34px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.68);
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.sceneModeControl button[aria-pressed="true"] {
+  background: rgba(244, 240, 234, 0.96);
+  color: var(--wine-dark);
+}
+
+.sceneRoot[data-scene-active="works"] .sceneModeControl,
+.sceneRoot[data-scene-active="gallery"] .sceneModeControl,
+.sceneRoot[data-scene-active="about"] .sceneModeControl {
+  border-color: rgba(23, 21, 21, 0.13);
+  background: rgba(244, 240, 234, 0.88);
+}
+
+.sceneRoot[data-scene-active="works"] .sceneModeControl button,
+.sceneRoot[data-scene-active="gallery"] .sceneModeControl button,
+.sceneRoot[data-scene-active="about"] .sceneModeControl button {
+  color: var(--muted);
+}
+
+.sceneRoot[data-scene-active="works"] .sceneModeControl button[aria-pressed="true"],
+.sceneRoot[data-scene-active="gallery"] .sceneModeControl button[aria-pressed="true"],
+.sceneRoot[data-scene-active="about"] .sceneModeControl button[aria-pressed="true"] {
+  background: var(--wine);
+  color: var(--white);
+}
+
+.sceneStatus {
+  position: fixed;
+  z-index: 120;
+  right: var(--gutter);
+  bottom: 20px;
+  max-width: 34ch;
+  margin: 0;
+  color: transparent;
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.sceneStatus:not(:empty) {
+  padding: 10px 14px;
+  border: 1px solid rgba(244, 240, 234, 0.2);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.sceneRoot .readingProgress {
+  transform: scaleX(var(--scene-progress));
+}
+
+.sceneRoot[data-scene-state="AUTO_ORBIT"] .hero3dWorld {
+  animation: ambientOrbit 20s ease-in-out infinite;
+}
+
+.sceneRoot[data-scene-state="ENGAGED"] .hero3dCharacter,
+.sceneRoot[data-scene-state="FOCUSED"] .hero3dCharacter {
+  filter:
+    drop-shadow(-24px 34px 30px rgba(0, 0, 0, 0.58))
+    drop-shadow(0 0 34px rgba(226, 181, 150, 0.16));
+}
+
+.sceneRoot[data-scene-state="DETAIL_OPEN"] .sceneAtmosphere {
+  filter: brightness(0.55) saturate(0.65);
+}
+
+.sceneRoot[data-scene-tier="static"] .hero3dWorld,
+.sceneRoot[data-scene-tier="static"] .hero3d--orbiting .hero3dWorld {
+  transform: none;
+  animation: none;
+}
+
+.sceneRoot[data-scene-tier="static"] .hero3dCharacter {
+  animation: none;
+}
+
+.sceneRoot[data-scene-tier="static"] .hero3dParticle,
+.sceneRoot[data-scene-tier="static"] .hero3dOrbit,
+.sceneRoot[data-scene-tier="static"] .hero3dDepth,
+.sceneRoot[data-scene-tier="static"] .orbitToggle {
+  display: none;
+}
+
+.sceneRoot[data-scene-tier="static"] .hero3dMeta p:first-child {
+  visibility: hidden;
+}
+
+.sceneRoot[data-scene-tier="static"] .hero3dMeta p:first-child::after {
+  content: "静态阅读模式";
+  visibility: visible;
+}
+
+.sceneRoot[data-scene-tier="static"] .workArt,
+.sceneRoot[data-scene-tier="static"] .workCard:nth-child(even) .workArt,
+.sceneRoot[data-scene-tier="static"] .timeline li > div,
+.sceneRoot[data-scene-tier="static"] .galleryImageWrap,
+.sceneRoot[data-scene-tier="static"] .galleryGrid figure:nth-child(even) .galleryImageWrap {
+  transform: none;
+}
+
+/* Spatial continuity for Chapters 02—05. */
+.sceneRoot:not([data-scene-tier="static"]) .worksSection {
+  background:
+    linear-gradient(180deg, rgba(255, 253, 252, 0.95), rgba(248, 243, 239, 0.91)),
+    transparent;
+}
+
+.sceneRoot:not([data-scene-tier="static"]) .worksList {
+  perspective: 1600px;
+  transform-style: preserve-3d;
+}
+
+.sceneRoot:not([data-scene-tier="static"]) .workCard:nth-child(odd) {
+  transform: translateX(-1.8vw);
+}
+
+.sceneRoot:not([data-scene-tier="static"]) .workCard:nth-child(even) {
+  transform: translateX(1.8vw);
+}
+
+.sceneRoot:not([data-scene-tier="static"]) .timelineSection {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 72% 45%, rgba(217, 169, 180, 0.15), transparent 36%),
+    rgba(48, 12, 23, 0.94);
+}
+
+.sceneRoot:not([data-scene-tier="static"]) .timelineSection::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 8%;
+  right: -12vw;
+  width: min(72vw, 960px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(217, 169, 180, 0.1);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 80px rgba(217, 169, 180, 0.025),
+    0 0 0 180px rgba(217, 169, 180, 0.018),
+    0 0 140px rgba(125, 35, 54, 0.24);
+  transform: perspective(900px) rotateX(68deg);
+  pointer-events: none;
+}
+
+.timelineSection > * {
+  position: relative;
+  z-index: 1;
+}
+
+.sceneRoot:not([data-scene-tier="static"]) .gallerySection {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 22%, rgba(125, 35, 54, 0.08), transparent 28%),
+    rgba(244, 240, 234, 0.94);
+}
+
+.sceneRoot:not([data-scene-tier="static"]) .galleryGrid {
+  perspective: 1800px;
+  transform-style: preserve-3d;
+}
+
+.sceneRoot:not([data-scene-tier="static"]) .galleryGrid figure:nth-child(3n + 1) {
+  transform: translateZ(18px);
+}
+
+.sceneRoot:not([data-scene-tier="static"]) .galleryGrid figure:nth-child(3n + 2) {
+  transform: translateY(18px) translateZ(-24px);
+}
+
+.sceneRoot:not([data-scene-tier="static"]) .aboutSection {
+  background: rgba(233, 226, 217, 0.95);
+}
+
+/* In-page detail layers preserve the source link as the final action. */
+.workArt,
+.galleryImageWrap {
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.workArt {
+  width: 100%;
+}
+
+.galleryImageWrap {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+
+.galleryOpen {
+  position: absolute;
+  z-index: 2;
+  right: 14px;
+  bottom: 14px;
+  padding: 8px 11px;
+  background: rgba(23, 21, 21, 0.78);
+  color: var(--white);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.galleryImageWrap:hover .galleryOpen,
+.galleryImageWrap:focus-visible .galleryOpen {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.detailDialog {
+  width: min(1100px, calc(100vw - 40px));
+  max-width: none;
+  max-height: calc(100svh - 40px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #160f12;
+  color: var(--paper);
+  box-shadow: 0 44px 140px rgba(0, 0, 0, 0.55);
+}
+
+.detailDialog::backdrop {
+  background: rgba(10, 6, 8, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.detailDialogPanel {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  min-height: 640px;
+}
+
+.detailArtwork {
+  min-height: 640px;
+  overflow: hidden;
+  background: #090708;
+}
+
+.detailArtwork img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detailCopy {
+  align-self: center;
+  padding: 90px clamp(32px, 5vw, 72px);
+}
+
+.detailCopy h3,
+.galleryDialog h3 {
+  margin: 20px 0 12px;
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 6vw, 6rem);
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+}
+
+.detailCopy > p:not(.eyebrow) {
+  color: rgba(244, 240, 234, 0.68);
+  line-height: 1.9;
+}
+
+.detailCopy .detailRole {
+  color: #d9a9b4 !important;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+
+.detailExternal {
+  display: inline-flex;
+  gap: 22px;
+  margin-top: 24px;
+  padding: 13px 16px;
+  background: var(--wine);
+  color: var(--white);
+  font-size: 12px;
+}
+
+.detailClose {
+  position: absolute;
+  z-index: 3;
+  top: 20px;
+  right: 20px;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(15, 10, 12, 0.72);
+  color: var(--white);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.detailPager {
+  position: absolute;
+  right: clamp(32px, 5vw, 72px);
+  bottom: 24px;
+  left: calc(57.5% + clamp(32px, 5vw, 72px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.detailPager button {
+  border: 0;
+  background: transparent;
+  color: rgba(244, 240, 234, 0.72);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.detailPager span {
+  color: #d9a9b4;
+  font-family: Georgia, serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.galleryDialog {
+  width: min(1280px, calc(100vw - 40px));
+}
+
+.galleryDialogPanel {
+  position: relative;
+  min-height: min(820px, calc(100svh - 40px));
+  padding: 36px 36px 88px;
+}
+
+.galleryDialog figure {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.35fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: end;
+  min-height: calc(100svh - 166px);
+  margin: 0;
+}
+
+.galleryDialog figure > img {
+  width: 100%;
+  max-height: calc(100svh - 112px);
+  object-fit: contain;
+}
+
+.galleryDialog figcaption {
+  padding: 70px 18px 44px 0;
+}
+
+.galleryDialog h3 {
+  font-size: clamp(2.5rem, 5vw, 5.2rem);
+}
+
+.galleryDialog figcaption a {
+  display: inline-block;
+  margin-top: 28px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid currentColor;
+  color: rgba(244, 240, 234, 0.68);
+  font-size: 11px;
+}
+
+.galleryPager {
+  right: 36px;
+  bottom: 28px;
+  left: 36px;
+}
+
+@media (max-width: 900px) {
+  .detailDialogPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .detailArtwork {
+    min-height: 42svh;
+    max-height: 52svh;
+  }
+
+  .detailCopy {
+    padding: 48px var(--gutter) 90px;
+  }
+
+  .detailPager {
+    right: var(--gutter);
+    left: var(--gutter);
+  }
+
+  .galleryDialog figure {
+    grid-template-columns: 1fr;
+    align-content: start;
+    min-height: 0;
+  }
+
+  .galleryDialog figure > img {
+    max-height: 64svh;
+  }
+
+  .galleryDialog figcaption {
+    padding: 0 0 30px;
+  }
+}
+
+@media (max-width: 767px) {
+  .sceneModeControl {
+    top: 74px;
+    right: 14px;
+  }
+
+  .sceneModeControl button {
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 9px;
+  }
+
+  .sceneRoot:not([data-scene-tier="static"]) .workCard:nth-child(odd),
+  .sceneRoot:not([data-scene-tier="static"]) .workCard:nth-child(even),
+  .sceneRoot:not([data-scene-tier="static"]) .galleryGrid figure:nth-child(n) {
+    transform: none;
+  }
+
+  .galleryOpen {
+    opacity: 1;
+    transform: none;
+  }
+
+  .detailDialog {
+    width: 100vw;
+    max-height: 100svh;
+    border: 0;
+  }
+
+  .galleryDialogPanel {
+    min-height: 100svh;
+    padding: 64px 16px 84px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sceneAtmosphere {
+    display: none;
+  }
+
+  .sceneRoot .hero3dWorld,
+  .sceneRoot .hero3d--orbiting .hero3dWorld {
+    transform: none;
+    animation: none;
+  }
+}

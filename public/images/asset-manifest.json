@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "updated": "2026-07-29",
+  "assets": [
+    {
+      "id": "P01",
+      "path": "/images/3d/hero-character.png",
+      "derivedFrom": "/images/ju-birthday-2021.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Ju_Jing_Yi_27th.jpg",
+      "creator": "Camellia234",
+      "license": "CC BY-SA 4.0",
+      "treatment": "人物透明抠图与生成式景深研究；保留原作署名，非 360 度模型",
+      "width": 1023,
+      "height": 1537,
+      "focus": [0.5, 0.42]
+    },
+    {
+      "id": "E01",
+      "path": "/images/ju-birthday-2021.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Ju_Jing_Yi_27th.jpg",
+      "creator": "Camellia234",
+      "license": "CC BY-SA 4.0",
+      "treatment": "裁切、降饱和与背景景深",
+      "width": 1800,
+      "height": 1350,
+      "focus": [0.64, 0.5]
+    },
+    {
+      "id": "P02",
+      "path": "/images/ju-portrait-03.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:%E9%9E%A0%E5%A9%A7%E7%A5%8E_(3).jpg",
+      "creator": "Aco",
+      "license": "CC BY 2.5",
+      "treatment": "裁切与色彩调整",
+      "width": 1264,
+      "height": 1800,
+      "focus": [0.5, 0.38]
+    },
+    {
+      "id": "P03",
+      "path": "/images/ju-portrait-02.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:%E9%9E%A0%E5%A9%A7%E7%A5%8E_(2).jpg",
+      "creator": "Aco",
+      "license": "CC BY 2.5",
+      "treatment": "裁切与色彩调整",
+      "width": 1174,
+      "height": 1800,
+      "focus": [0.52, 0.36]
+    },
+    {
+      "id": "P04A",
+      "path": "/images/ju-portrait-04.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:%E9%9E%A0%E5%A9%A7%E7%A5%8E_(4).jpg",
+      "creator": "Aco",
+      "license": "CC BY 2.5",
+      "treatment": "裁切与色彩调整",
+      "width": 1320,
+      "height": 1800,
+      "focus": [0.5, 0.24]
+    },
+    {
+      "id": "P04B",
+      "path": "/images/ju-portrait-05.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:%E9%9E%A0%E5%A9%A7%E7%A5%8E_(5).jpg",
+      "creator": "Aco",
+      "license": "CC BY 2.5",
+      "treatment": "裁切与色彩调整",
+      "width": 1257,
+      "height": 1800,
+      "focus": [0.52, 0.22]
+    },
+    {
+      "id": "G04",
+      "path": "/images/ju-election-2015.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:SNH48_%E7%AC%AC%E4%BA%8C%E5%B1%8A%E6%80%BB%E9%80%89%E4%B8%BE_10.jpg",
+      "creator": "纸鱼_咲",
+      "license": "CC BY 2.5",
+      "treatment": "裁切与色彩调整",
+      "width": 1800,
+      "height": 1350,
+      "focus": [0.5, 0.45]
+    },
+    {
+      "id": "W01-W07",
+      "paths": [
+        "/images/works/yunxi.webp",
+        "/images/works/white-snake.webp",
+        "/images/works/love-emergency.jpg",
+        "/images/works/beauty-of-resilience.webp",
+        "/images/works/sword-and-fairy-4.webp",
+        "/images/works/in-blossom.jpg",
+        "/images/works/moonlit-reunion.jpg"
+      ],
+      "source": "作品条目内对应的 iQIYI、Apple Music 与优酷官方页面",
+      "license": "Copyright retained by the respective rights holders",
+      "treatment": "作品识别用封面纹理，不作为人物抠图素材"
+    }
+  ]
+}

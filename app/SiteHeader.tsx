@@ -12,52 +12,16 @@ const navigation = [
 export default function SiteHeader() {
   const [activeSection, setActiveSection] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [readingProgress, setReadingProgress] = useState(0);
   const menuRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
-    let frame = 0;
-
-    const updateProgress = () => {
-      frame = 0;
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-      setReadingProgress(scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0);
+    const handleChapterChange = (event: Event) => {
+      const chapter = (event as CustomEvent<{ chapter: string }>).detail.chapter;
+      setActiveSection(chapter);
     };
 
-    const onScroll = () => {
-      if (!frame) {
-        frame = window.requestAnimationFrame(updateProgress);
-      }
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-        if (visible) {
-          setActiveSection(visible.target.id);
-        }
-      },
-      { rootMargin: "-24% 0px -62% 0px", threshold: [0, 0.1, 0.5] },
-    );
-
-    navigation.forEach(([id]) => {
-      const section = document.getElementById(id);
-      if (section) observer.observe(section);
-    });
-
-    updateProgress();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-
-    return () => {
-      if (frame) window.cancelAnimationFrame(frame);
-      observer.disconnect();
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
+    window.addEventListener("scene:chapterchange", handleChapterChange);
+    return () => window.removeEventListener("scene:chapterchange", handleChapterChange);
   }, []);
 
   const closeMenu = () => {
@@ -97,10 +61,7 @@ export default function SiteHeader() {
         <nav aria-label="移动端导航">{renderLinks()}</nav>
       </details>
       <span className="readingProgressTrack" aria-hidden="true">
-        <span
-          className="readingProgress"
-          style={{ transform: `scaleX(${readingProgress})` }}
-        />
+        <span className="readingProgress" />
       </span>
     </header>
   );

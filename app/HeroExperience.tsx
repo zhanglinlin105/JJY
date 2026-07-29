@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { useState, type KeyboardEvent } from "react";
 
 const particles = [
   ["10%", "20%", "-10px", "3px"],
@@ -14,59 +14,15 @@ const particles = [
 ] as const;
 
 export default function HeroExperience() {
-  const heroRef = useRef<HTMLElement>(null);
-  const animationFrame = useRef<number | null>(null);
   const [isOrbiting, setIsOrbiting] = useState(false);
-  const [isEngaged, setIsEngaged] = useState(false);
-
-  useEffect(() => {
-    return () => {
-      if (animationFrame.current !== null) {
-        cancelAnimationFrame(animationFrame.current);
-      }
-    };
-  }, []);
-
-  function updateView(x: number, y: number) {
-    const hero = heroRef.current;
-    if (!hero || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-
-    if (animationFrame.current !== null) {
-      cancelAnimationFrame(animationFrame.current);
-    }
-
-    animationFrame.current = requestAnimationFrame(() => {
-      hero.style.setProperty("--scene-rx", `${(-y * 5.5).toFixed(2)}deg`);
-      hero.style.setProperty("--scene-ry", `${(x * 8).toFixed(2)}deg`);
-      hero.style.setProperty("--scene-x", `${(x * 18).toFixed(2)}px`);
-      hero.style.setProperty("--scene-y", `${(y * 12).toFixed(2)}px`);
-      hero.style.setProperty("--light-x", `${(50 + x * 18).toFixed(2)}%`);
-      hero.style.setProperty("--light-y", `${(42 + y * 14).toFixed(2)}%`);
-    });
-  }
-
-  function handlePointerMove(event: PointerEvent<HTMLElement>) {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
-    const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
-    updateView(x, y);
-    setIsEngaged(true);
-  }
-
-  function resetView() {
-    updateView(0, 0);
-    setIsEngaged(false);
-  }
 
   function handleKeyDown(event: KeyboardEvent<HTMLElement>) {
-    const controls: Record<string, [number, number]> = {
-      ArrowLeft: [-0.75, 0],
-      ArrowRight: [0.75, 0],
-      ArrowUp: [0, -0.75],
-      ArrowDown: [0, 0.75],
-      Escape: [0, 0],
+    const controls: Record<string, { x: number; y: number }> = {
+      ArrowLeft: { x: -0.75, y: 0 },
+      ArrowRight: { x: 0.75, y: 0 },
+      ArrowUp: { x: 0, y: -0.75 },
+      ArrowDown: { x: 0, y: 0.75 },
+      Escape: { x: 0, y: 0 },
     };
     const next = controls[event.key];
 
@@ -75,23 +31,18 @@ export default function HeroExperience() {
     }
 
     event.preventDefault();
-    updateView(...next);
-    setIsEngaged(event.key !== "Escape");
+    window.dispatchEvent(new CustomEvent("scene:nudge", { detail: next }));
   }
 
   return (
     <section
-      className={`hero3d${isOrbiting ? " hero3d--orbiting" : ""}${
-        isEngaged ? " hero3d--engaged" : ""
-      }`}
+      className={`hero3d${isOrbiting ? " hero3d--orbiting" : ""}`}
       id="top"
+      data-scene="hero"
+      data-scene-hotspot
       aria-labelledby="hero-title"
       aria-describedby="hero-interaction-hint"
-      ref={heroRef}
       tabIndex={0}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={resetView}
-      onBlur={resetView}
       onKeyDown={handleKeyDown}
     >
       <div className="hero3dViewport" aria-hidden="true">
@@ -163,7 +114,15 @@ export default function HeroExperience() {
             className="orbitToggle"
             type="button"
             aria-pressed={isOrbiting}
-            onClick={() => setIsOrbiting((value) => !value)}
+            onClick={() =>
+              setIsOrbiting((value) => {
+                const next = !value;
+                window.dispatchEvent(
+                  new CustomEvent("scene:orbit", { detail: { enabled: next } }),
+                );
+                return next;
+              })
+            }
           >
             <span aria-hidden="true">{isOrbiting ? "Ⅱ" : "◌"}</span>
             {isOrbiting ? "暂停环绕" : "自动环绕"}

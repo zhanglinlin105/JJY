@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
     ?.trim();
   const protocol = forwardedProtocol || (host.startsWith("localhost") ? "http" : "https");
   const origin = `${protocol}://${host}`;
-  const socialImage = `${origin}/og.png`;
+  const socialImage = `${origin}/og-spatial.png`;
 
   return {
     metadataBase: new URL(origin),
@@ -38,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: socialImage,
           width: 1731,
           height: 909,
-          alt: "鞠婧祎 3D 互动人物主页分享封面",
+          alt: "鞠婧祎五章节 3D 互动人物志：时光影廊分享封面",
         },
       ],
     },

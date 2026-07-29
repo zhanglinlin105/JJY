@@ -1,4 +1,6 @@
+import GalleryShowcase from "./GalleryShowcase";
 import HeroExperience from "./HeroExperience";
+import SceneController from "./SceneController";
 import SiteHeader from "./SiteHeader";
 import WorksShowcase from "./WorksShowcase";
 
@@ -194,7 +196,7 @@ const sources = [
 
 export default function Home() {
   return (
-    <>
+    <SceneController>
       <a className="skipLink" href="#main-content">
         跳到主要内容
       </a>
@@ -220,7 +222,12 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="worksSection" id="works" aria-labelledby="works-title">
+        <section
+          className="worksSection"
+          id="works"
+          data-scene="works"
+          aria-labelledby="works-title"
+        >
           <div className="sectionHeading">
             <div>
               <p className="eyebrow">SELECTED WORKS / 代表作</p>
@@ -236,7 +243,12 @@ export default function Home() {
           <WorksShowcase works={works} />
         </section>
 
-        <section className="timelineSection" id="journey" aria-labelledby="journey-title">
+        <section
+          className="timelineSection"
+          id="journey"
+          data-scene="journey"
+          aria-labelledby="journey-title"
+        >
           <div className="timelineIntro">
             <p className="eyebrow">CAREER JOURNEY / 生平经历</p>
             <h2 id="journey-title">时间留下的<br />每一束光</h2>
@@ -260,7 +272,12 @@ export default function Home() {
           </ol>
         </section>
 
-        <section className="gallerySection" id="gallery" aria-labelledby="gallery-title">
+        <section
+          className="gallerySection"
+          id="gallery"
+          data-scene="gallery"
+          aria-labelledby="gallery-title"
+        >
           <div className="sectionHeading galleryHeading">
             <div>
               <p className="eyebrow">PORTRAITS & MOMENTS / 影像</p>
@@ -268,31 +285,15 @@ export default function Home() {
             </div>
             <p>舞台、镜头与安静片刻，构成人物更完整的侧面。</p>
           </div>
-          <div className="galleryGrid">
-            {gallery.map((image) => (
-              <figure className={image.className} key={image.src}>
-                <div className="galleryImageWrap">
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    width={image.width}
-                    height={image.height}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <figcaption>
-                  <span>{image.caption}</span>
-                  <a href={image.file} target="_blank" rel="noreferrer">
-                    来源 ↗
-                  </a>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+          <GalleryShowcase images={gallery} />
         </section>
 
-        <section className="aboutSection" id="about" aria-labelledby="about-title">
+        <section
+          className="aboutSection"
+          id="about"
+          data-scene="about"
+          aria-labelledby="about-title"
+        >
           <div className="aboutPortrait">
             <img
               src="/images/ju-portrait-02.jpg"
@@ -376,6 +377,6 @@ export default function Home() {
           <a href="#top">回到顶部 ↑</a>
         </div>
       </footer>
-    </>
+    </SceneController>
   );
 }
