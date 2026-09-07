@@ -8,9 +8,7 @@ type SceneCallbacks = {
   reducedMotion: boolean;
   onReady: () => void;
   onProgress: (value: number) => void;
-  onAssetError: () => void;
   onSelect: (selection: Selection) => void;
-  onHover: (label: string | null) => void;
   onContextLost: () => void;
 };
 export type ArchiveSceneAPI = {
@@ -155,7 +153,7 @@ export function createArchiveScene(host: HTMLElement, callbacks: SceneCallbacks)
     image.onerror = () => {
       pendingImages.delete(image);
       textureWaiters.delete(url);
-      if (!disposed) { loaded++; callbacks.onAssetError(); callbacks.onProgress(Math.round(loaded / requested * 100)); if (loaded >= requested) markReady(); }
+      if (!disposed) { loaded++; callbacks.onProgress(Math.round(loaded / requested * 100)); if (loaded >= requested) markReady(); }
     };
     image.src = url;
   }
@@ -372,7 +370,6 @@ export function createArchiveScene(host: HTMLElement, callbacks: SceneCallbacks)
     active = id;
     selected = undefined;
     hover = undefined;
-    callbacks.onHover(null);
     buildRoom(id);
     mirror.position.x = roomCenter(id)[0];
     controls.maxDistance = host.clientWidth < 720 ? 58 : 34;
@@ -440,10 +437,9 @@ export function createArchiveScene(host: HTMLElement, callbacks: SceneCallbacks)
     if (hover !== item) {
       hover = item;
       renderer.domElement.style.cursor = item ? "pointer" : "grab";
-      callbacks.onHover(item?.label ?? null);
     }
   }
-  function pointerLeave() { hover = undefined; callbacks.onHover(null); }
+  function pointerLeave() { hover = undefined; }
   function onStart() { stopFlight(); }
   function onContextLost(event: Event) {
     event.preventDefault();

@@ -34,6 +34,7 @@ test("server-renders the complete accessible archive alongside the 3D experience
   assert.match(html, /<noscript>/);
   assert.match(html, /展区导航/);
   assert.match(html, /筛选代表作/);
+  assert.doesNotMatch(html, /下一站 ·|拖动环绕|展品目录/);
   for (const chapter of layout.chapters) assert.ok(html.includes(`href="#${chapter.id}"`));
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape/);
 });

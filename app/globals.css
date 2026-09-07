@@ -21,3 +21,33 @@
   .sceneTools { top: 48%; }
   .sceneTools button { height: 29px; }
 }
+
+/* Keep the full viewport focused on the spatial exhibition. */
+.exhibitionOverlay {
+  bottom: 0;
+}
+
+.sceneLoading,
+.sceneFailure {
+  bottom: 0;
+}
+
+.exhibitDetail {
+  max-height: calc(100% - 60px);
+}
+
+@media (max-width: 719px) {
+  .exhibitionOverlay {
+    bottom: 0;
+  }
+
+  .sceneLoading,
+  .sceneFailure {
+    bottom: 0;
+  }
+
+  .exhibitDetail {
+    bottom: 20px;
+    max-height: calc(100% - 40px);
+  }
+}
